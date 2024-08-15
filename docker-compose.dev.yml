@@ -4,11 +4,11 @@ services:
             context: .
             dockerfile: dockerfiles/go/Dockerfile.dev
             args:
-                SSH_PRIVATE_KEY: ${API_PORT}
+                API_PORT: ${API_PORT}
         restart: unless-stopped
         container_name: myapp_api
         ports:
-          - "${API_PORT}:8000"
+          - "${API_PORT}:${API_PORT}"
         volumes:
           - .:/app
           - go-modules:/go/pkg/mod

@@ -3,6 +3,8 @@ FROM golang:1.23rc2-alpine3.20 as development
 # Install necessary packages
 RUN apk add --no-cache openssh-client git gcc musl-dev libc-dev
 
+ARG API_PORT
+
 # Add a work directory
 WORKDIR /app
 
@@ -17,7 +19,7 @@ COPY . .
 RUN go install github.com/cespare/reflex@latest
 
 # Expose port
-EXPOSE 8091
+EXPOSE ${API_PORT}
 
 # Start app
 CMD ["reflex", "-r", "\\.go$", "-s", "--", "go", "run", "./cmd/api/main.go"]
