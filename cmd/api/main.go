@@ -68,7 +68,7 @@ func gracefulShutdown(srv *http.Server) {
 // initializeDotEnv initializes all vars from .env file
 // make sure to provide correct path
 func initializeDotEnv() {
-	if err := godotenv.Load("../../.env"); err != nil {
+	if err := godotenv.Load(); err != nil {
 		log.Fatalf("Could not initialize .env file %v", err)
 	}
 }
