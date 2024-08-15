@@ -41,7 +41,7 @@ services:
             - myapp_network_internal
         healthcheck:
             start_period: 60s
-            test: "mysql ${MYSQL_DB_NAME} -u ${MYSQL_USER} --password=${MYSQL_USER_PASSWORD} -e 'SELECT 1;'" # make sure we already use our own privileged user and db healthy
+            test: "mysql -u ${MYSQL_USER} --password='${MYSQL_USER_PASSWORD}' -e 'SELECT 1;'" # make sure we already use our own privileged user and db healthy
             interval: 20s
             timeout: 10s
             retries: 20
