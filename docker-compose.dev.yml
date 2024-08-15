@@ -17,9 +17,38 @@ services:
           - API_PORT=${API_PORT}
         networks:
           - myapp_network_internal
+        depends_on:
+            - mysql
+    
+    mysql:
+        platform: linux/amd64 # add only if running on amd64
+        image: mysql:8.4.0
+        container_name: myapp_db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "${MYSQL_PORT}:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DB_NAME: ${MYSQL_DB_NAME}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_USER_PASSWORD: ${MYSQL_USER_PASSWORD}
+        volumes:
+            - myapp-mysql-data:/var/lib/mysql # mount into mysql dir since we use it
+            - ./dockerfiles/mysql/init:/docker-entrypoint-initdb.d/
+            - ./dockerfiles/mysql/my.cnf:/etc/mysql/my.cnf
+        networks:
+            - myapp_network_internal
+        healthcheck:
+            start_period: 60s
+            test: "mysql ${MYSQL_DB_NAME} -u ${MYSQL_USER} --password=${MYSQL_USER_PASSWORD} -e 'SELECT 1;'" # make sure we already use our own privileged user and db healthy
+            interval: 20s
+            timeout: 10s
+            retries: 20
 
 volumes:
     go-modules:
+    myapp-mysql-data:
 
 networks:
     myapp_network_internal:
