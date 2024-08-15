@@ -1,0 +1,27 @@
+services:
+    api:
+        build:
+            context: .
+            dockerfile: dockerfiles/go/Dockerfile.dev
+            args:
+                SSH_PRIVATE_KEY: ${API_PORT}
+        restart: unless-stopped
+        container_name: myapp_api
+        ports:
+          - "${API_PORT}:8000"
+        volumes:
+          - .:/app
+          - go-modules:/go/pkg/mod
+        environment:
+          - TZ=Europe/Copenhagen
+          - API_PORT=${API_PORT}
+        networks:
+          - myapp_network_internal
+
+volumes:
+    go-modules:
+
+networks:
+    myapp_network_internal:
+      driver: bridge
+      external: false

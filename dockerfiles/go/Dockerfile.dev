@@ -1,0 +1,23 @@
+FROM golang:1.23rc2-alpine3.20 as development
+
+# Install necessary packages
+RUN apk add --no-cache openssh-client git gcc musl-dev libc-dev
+
+# Add a work directory
+WORKDIR /app
+
+# Cache and install dependencies
+COPY go.mod ./
+RUN go mod download
+
+# Copy app files
+COPY . .
+
+# Install Reflex for development for hot-reload
+RUN go install github.com/cespare/reflex@latest
+
+# Expose port
+EXPOSE 8091
+
+# Start app
+CMD ["reflex", "-r", "\\.go$", "-s", "--", "go", "run", "./cmd/api/main.go"]
