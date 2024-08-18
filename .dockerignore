@@ -1,0 +1,9 @@
+*.md
+
+.env.sample
+
+.git
+
+.gitignore
+
+*.log
