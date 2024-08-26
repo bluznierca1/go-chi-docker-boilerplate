@@ -6,6 +6,8 @@ import (
 	"log"
 	"myapp/internal/api/handler"
 	"myapp/internal/api/router"
+	"myapp/internal/database"
+	"myapp/internal/ent"
 	"net/http"
 	"os"
 	"os/signal"
@@ -23,6 +25,11 @@ func main() {
 	var apiPort string
 	if apiPort = os.Getenv("API_PORT"); apiPort == "" {
 		log.Panic("Missing value for API_PORT env var")
+	}
+
+	mysqlClient, err := database.InitMySqlDb()
+	if err != nil {
+		log.Fatalf("error while connecting db: %v", err)
 	}
 
 	apiHandlers := handler.InitHandlers() // at some point there might be error and you might need to inject services
@@ -43,11 +50,11 @@ func main() {
 		}
 	}()
 
-	gracefulShutdown(srv)
+	gracefulShutdown(srv, mysqlClient)
 
 }
 
-func gracefulShutdown(srv *http.Server) {
+func gracefulShutdown(srv *http.Server, dbConn *ent.Client) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
@@ -60,6 +67,9 @@ func gracefulShutdown(srv *http.Server) {
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server forced to shutdown: ", err)
 	}
+
+	// close db
+	database.CloseDbConnection(dbConn)
 
 	log.Println("Exiting server gracefully...")
 
