@@ -50,7 +50,7 @@ func SuccessResponse(data interface{}, statusCode int, w http.ResponseWriter) {
 	if err != nil {
 		log.Printf("error on building success response: %v", err)
 		errors = append(errors, apperrors.Error{
-			ErrorCode: apperrors.ErrInternalServerError,
+			ErrorCode: apperrors.InternalServerError,
 			ErrorMsg:  "Internal error",
 		})
 		ErrorResponse(errors, http.StatusInternalServerError, w)
