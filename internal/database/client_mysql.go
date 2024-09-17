@@ -15,7 +15,7 @@ import (
 func InitMySqlDb() (*ent.Client, error) {
 	// Construct the DSN from environment variables
 	dsn := os.Getenv("MYSQL_USER") + ":" + os.Getenv("MYSQL_USER_PASSWORD") +
-		"@tcp(" + os.Getenv("MYSQL_HOST") + ")/" +
+		"@tcp(" + os.Getenv("MYSQL_HOST") + ":" + os.Getenv("MYSQL_PORT_INTERNAL") + ")/" +
 		os.Getenv("MYSQL_DB_NAME") + "?charset=utf8mb4&parseTime=True&loc=Local"
 	// Open a connection to the database
 	// it does not throw error even if credentials are wrong!

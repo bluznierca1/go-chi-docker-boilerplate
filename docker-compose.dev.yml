@@ -18,7 +18,8 @@ services:
         networks:
           - myapp_network_internal
         depends_on:
-            - mysql
+            mysql:
+                condition: service_healthy
     
     mysql:
         platform: linux/amd64 # add only if running on amd64
@@ -27,12 +28,14 @@ services:
         restart: unless-stopped
         tty: true
         ports:
-            - "${MYSQL_PORT}:3306"
+            - "${MYSQL_PORT}:${MYSQL_PORT_INTERNAL}"
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DB_NAME: ${MYSQL_DB_NAME}
             MYSQL_USER: ${MYSQL_USER}
             MYSQL_USER_PASSWORD: ${MYSQL_USER_PASSWORD}
+            MYSQL_DB_TESTING_NAME: ${MYSQL_DB_TESTING_NAME}
+            MYSQL_PORT_INTERNAL: ${MYSQL_PORT_INTERNAL}
         volumes:
             - myapp-mysql-data:/var/lib/mysql # mount into mysql dir since we use it
             - ./dockerfiles/mysql/init:/docker-entrypoint-initdb.d/
