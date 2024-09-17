@@ -24,8 +24,10 @@ func InitRouter(apiHandlers handler.ApiHandlers) chi.Router {
 		router.Mount("/debug", middleware.Profiler())
 	}
 
-	// Group and define your routes in here
-	router.Get("/hello", apiHandlers.HelloHandler.Hello)
+	router.Route("/api", func(r chi.Router) {
+		// Group and define your routes in here
+		r.Get("/hello", apiHandlers.HelloHandler.Hello)
+	})
 
 	return router
 }
